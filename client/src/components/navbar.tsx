@@ -12,7 +12,6 @@ import clsx from 'clsx';
 import { siteConfig } from '@/config/site';
 import { ThemeSwitch } from '@/components/theme-switch';
 import { GithubIcon } from '@/components/icons';
-import { Logo } from '@/components/icons';
 
 export const Navbar = () => {
 	return (
@@ -24,7 +23,7 @@ export const Navbar = () => {
 						color="foreground"
 						href="/"
 					>
-						<Logo />
+						{/* <Logo /> */}
 						<p className="font-bold text-inherit">LYNX</p>
 					</Link>
 				</NavbarBrand>

@@ -7,8 +7,8 @@ export const siteConfig = {
 			href: '/',
 		},
 		{
-			label: 'Dashboard',
-			href: '/dashboard',
+			label: 'Sign In',
+			href: '/sign-in',
 		},
 	],
 	links: {

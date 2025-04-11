@@ -12,6 +12,6 @@ export const siteConfig = {
 		},
 	],
 	links: {
-		github: 'https://github.com/frontio-ai/heroui',
+		github: 'https://github.com/puneet672003/lynx/tree/main',
 	},
 };

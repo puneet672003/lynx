@@ -1,0 +1,50 @@
+# Node modules
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build output
+dist/
+build/
+
+# Dependency directories
+.pnpm
+.pnp.*
+.cache/
+
+# IDE settings
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Coverage output
+coverage/
+
+# Misc
+*.local
+
+# TypeScript
+*.tsbuildinfo
+
+# lockfile
+pnpm-lock.yaml
+
+# db
+db/

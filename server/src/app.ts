@@ -26,5 +26,5 @@ app.use(cookieParser());
 app.use(router);
 
 app.listen(PORT, () => {
-	console.log('Server is up' + PORT);
+	console.log('Server is up');
 });

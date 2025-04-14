@@ -4,7 +4,6 @@ import {
 	NavbarBrand,
 	NavbarContent,
 	NavbarItem,
-	NavbarMenuToggle,
 } from '@heroui/navbar';
 import { link as linkStyles } from '@heroui/theme';
 import clsx from 'clsx';
@@ -27,7 +26,7 @@ export const Navbar = () => {
 						<p className="font-bold text-inherit">LYNX</p>
 					</Link>
 				</NavbarBrand>
-				<div className="hidden lg:flex gap-4 justify-start ml-2">
+				<div className="flex gap-4 justify-start ml-2">
 					{siteConfig.navItems.map((item) => (
 						<NavbarItem key={item.href}>
 							<Link
@@ -45,24 +44,13 @@ export const Navbar = () => {
 				</div>
 			</NavbarContent>
 
-			<NavbarContent
-				className="hidden sm:flex basis-1/5 sm:basis-full"
-				justify="end"
-			>
-				<NavbarItem className="hidden sm:flex gap-2">
+			<NavbarContent className="flex basis-1/5 sm:basis-full" justify="end">
+				<NavbarItem className="flex gap-2">
 					<Link isExternal href={siteConfig.links.github} title="GitHub">
 						<GithubIcon className="text-default-500" />
 					</Link>
 					<ThemeSwitch />
 				</NavbarItem>
-			</NavbarContent>
-
-			<NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-				<Link isExternal href={siteConfig.links.github}>
-					<GithubIcon className="text-default-500" />
-				</Link>
-				<ThemeSwitch />
-				<NavbarMenuToggle />
 			</NavbarContent>
 		</HeroUINavbar>
 	);

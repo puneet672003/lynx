@@ -75,7 +75,7 @@ function SignUp() {
 							/>
 
 							<div className="flex flex-col gap-2 items-center w-full mt-4">
-								<Button fullWidth color="primary" type="submit">
+								<Button fullWidth color="secondary" type="submit">
 									Register
 								</Button>
 								<div>

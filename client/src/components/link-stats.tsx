@@ -1,14 +1,15 @@
+import { useState, useEffect } from 'react';
 import {
 	Drawer,
 	DrawerContent,
 	DrawerHeader,
 	DrawerBody,
 } from '@heroui/drawer';
-import { useState, useEffect } from 'react';
 import { Chart, registerables, ChartOptions } from 'chart.js';
 import { Bar, Line } from 'react-chartjs-2';
 import { Divider } from '@heroui/divider';
-import { useTheme } from '@heroui/use-theme';
+
+import { cssVar } from '@/utils/color';
 
 Chart.register(...registerables);
 
@@ -28,9 +29,23 @@ function LinkStats({
 	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
 	clicks: ClickData[],
 }) {
-	const { theme } = useTheme();
 	const onClose = () => {
 		setIsOpen(false);
+	};
+
+	const getChartColors = () => {
+		return {
+			borderColor: cssVar('--chart-border-color'),
+			backgroundColor: cssVar('--chart-bg-color'),
+			pointColor: cssVar('--chart-point-color'),
+			textColor: cssVar('--chart-text-color'),
+			gridColor: cssVar('--chart-grid-color'),
+			deviceColors: {
+				desktop: cssVar('--chart-device-desktop'),
+				phone: cssVar('--chart-device-phone'),
+				tablet: cssVar('--chart-device-tablet'),
+			},
+		};
 	};
 
 	const [timeData, setTimeData] = useState<{
@@ -67,21 +82,6 @@ function LinkStats({
 		});
 	}, [clicks]);
 
-	const chartColors = {
-		borderColor: theme === 'dark' ? '#60a5fa' : '#007bff',
-		backgroundColor:
-			theme === 'dark' ? 'rgba(96, 165, 250, 0.2)' : 'rgba(0, 123, 255, 0.2)',
-		pointColor: theme === 'dark' ? '#60a5fa' : '#007bff',
-		textColor: theme === 'dark' ? '#e5e7eb' : '#333333',
-		gridColor:
-			theme === 'dark' ? 'rgba(156, 163, 175, 0.15)' : 'rgba(75, 85, 99, 0.1)',
-		deviceColors: {
-			desktop: theme === 'dark' ? '#a78bfa' : '#FF6384',
-			phone: theme === 'dark' ? '#4ade80' : '#36A2EB',
-			tablet: theme === 'dark' ? '#fbbf24' : '#FFCE56',
-		},
-	};
-
 	const timeChartOptions: ChartOptions<'line'> = {
 		responsive: true,
 		plugins: {
@@ -93,7 +93,7 @@ function LinkStats({
 					size: 16,
 					weight: 'bold',
 				},
-				color: chartColors.textColor,
+				color: getChartColors().textColor,
 			},
 		},
 		elements: {
@@ -101,7 +101,7 @@ function LinkStats({
 			point: {
 				radius: 4,
 				hoverRadius: 6,
-				backgroundColor: chartColors.pointColor,
+				backgroundColor: getChartColors().pointColor,
 			},
 		},
 		scales: {
@@ -111,13 +111,13 @@ function LinkStats({
 					display: false,
 					text: 'Clicks',
 					font: { size: 14 },
-					color: chartColors.textColor,
+					color: getChartColors().textColor,
 				},
 				grid: {
-					color: chartColors.gridColor,
+					color: getChartColors().gridColor,
 				},
 				ticks: {
-					color: chartColors.textColor,
+					color: getChartColors().textColor,
 				},
 			},
 			x: {
@@ -125,13 +125,13 @@ function LinkStats({
 					display: false,
 					text: 'Date',
 					font: { size: 14 },
-					color: chartColors.textColor,
+					color: getChartColors().textColor,
 				},
 				grid: {
-					color: chartColors.gridColor,
+					color: getChartColors().gridColor,
 				},
 				ticks: {
-					color: chartColors.textColor,
+					color: getChartColors().textColor,
 				},
 			},
 		},
@@ -148,22 +148,22 @@ function LinkStats({
 					size: 16,
 					weight: 'bold',
 				},
-				color: chartColors.textColor,
+				color: getChartColors().textColor,
 			},
 		},
 		scales: {
 			y: {
 				beginAtZero: true,
 				grid: {
-					color: chartColors.gridColor,
+					color: getChartColors().gridColor,
 				},
 				ticks: {
-					color: chartColors.textColor,
+					color: getChartColors().textColor,
 				},
 			},
 			x: {
 				ticks: {
-					color: chartColors.textColor,
+					color: getChartColors().textColor,
 				},
 			},
 		},
@@ -175,8 +175,8 @@ function LinkStats({
 			{
 				label: 'Clicks',
 				data: timeData.data,
-				borderColor: chartColors.borderColor,
-				backgroundColor: chartColors.backgroundColor,
+				borderColor: getChartColors().borderColor,
+				backgroundColor: getChartColors().backgroundColor,
 				fill: true,
 			},
 		],
@@ -184,11 +184,9 @@ function LinkStats({
 
 	const getDeviceColors = () => {
 		return deviceData.labels.map((label) => {
-			if (label === 'desktop') return chartColors.deviceColors.desktop;
-			if (label === 'phone') return chartColors.deviceColors.phone;
-			if (label === 'tablet') return chartColors.deviceColors.tablet;
-
-			return theme === 'dark' ? '#94a3b8' : '#9CA3AF'; // Default color
+			if (label === 'desktop') return getChartColors().deviceColors.desktop;
+			if (label === 'phone') return getChartColors().deviceColors.phone;
+			if (label === 'tablet') return getChartColors().deviceColors.tablet;
 		});
 	};
 

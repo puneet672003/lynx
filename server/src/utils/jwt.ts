@@ -2,14 +2,11 @@ import jwt from 'jsonwebtoken';
 
 import { JwtPayload } from '../models/auth.models';
 
-
-const JWT_SECRET = 'default_secret'; 
-const EXPIRES_IN = '7d';
-
+const JWT_SECRET = process.env['JWT_SECRET'] || 'default_secret'; 
 
 export const generateToken = (payload: JwtPayload): string | null => {
   try {
-    return jwt.sign(payload, JWT_SECRET, { expiresIn: EXPIRES_IN });
+    return jwt.sign(payload, JWT_SECRET);
   } catch (err: any) {
     console.error('Invalid token: ', err.message);
     return null;

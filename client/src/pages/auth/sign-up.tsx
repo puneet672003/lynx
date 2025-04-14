@@ -3,12 +3,31 @@ import { Link } from '@heroui/link';
 import { Form } from '@heroui/form';
 import { Input } from '@heroui/input';
 import { Button } from '@heroui/button';
+import { addToast } from '@heroui/toast';
 import { Card, CardHeader, CardBody } from '@heroui/card';
 
 import DefaultLayout from '@/layouts/default';
+import { api } from '@/api/axios';
 
 function SignUp() {
 	const [passwordError, setPasswordError] = useState<boolean>(false);
+
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		const data = Object.fromEntries(new FormData(e.currentTarget));
+
+		api
+			.post('/auth/register', data)
+			.then((res) => {
+				if (res?.token) {
+					localStorage.setItem('token', res.token);
+					addToast({ description: 'Logged in', color: 'success' });
+					window.location.href = '/';
+				} else {
+				}
+			})
+			.catch((err) => addToast({ description: err.message, color: 'danger' }));
+	};
 
 	return (
 		<DefaultLayout>
@@ -21,13 +40,7 @@ function SignUp() {
 					<CardBody>
 						<Form
 							className="w-full flex flex-col gap-4"
-							onSubmit={(e) => {
-								e.preventDefault();
-								const data = Object.fromEntries(new FormData(e.currentTarget));
-
-								setPasswordError(data['password'] !== data['confirm-password']);
-								console.log(data);
-							}}
+							onSubmit={handleSubmit}
 						>
 							<Input
 								isRequired

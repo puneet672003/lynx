@@ -1,86 +1,119 @@
-import fs from 'fs/promises';
-import path from 'path';
-import JsonQuery from 'json-query';
-
+import mongoose, { Schema, Document } from 'mongoose';
 import { UserInDB } from '../models/auth.models';
 import { Link } from '../models/link.model';
 
-const USER_DB_PATH = path.resolve(__dirname, '../../db/users.json');
-const LINKS_DB_PATH = path.resolve(__dirname, '../../db/links.json');
+export const connectDB = async () => {
+	const MONGODB_URL =
+		process.env['MONGODB_URL'] || 'mongodb://localhost:27017/';
 
-const readUsers = async (): Promise<UserInDB[]> => {
 	try {
-		const data = await fs.readFile(USER_DB_PATH, 'utf-8');
-		return JSON.parse(data);
+		await mongoose.connect(MONGODB_URL);
+		console.log('MongoDB connected successfully');
 	} catch (error) {
-		console.error('Error reading users:', error);
+		console.error('MongoDB connection error:', error);
+		process.exit(1);
+	}
+};
+
+interface UserDocument extends UserInDB, Document {}
+
+const UserSchema = new Schema<UserDocument>({
+	userId: { type: String, required: true, unique: true },
+	email: { type: String, required: true, unique: true },
+	password: { type: String, required: true },
+});
+
+const ClickSchema = new Schema({
+	device: {
+		type: { type: String },
+	},
+	clickedAt: { type: Date, default: Date.now },
+});
+
+interface LinkDocument extends Link, Document {}
+
+const LinkSchema = new Schema<LinkDocument>({
+	userId: { type: String, required: true },
+	originalUrl: { type: String, required: true },
+	urlAlias: { type: String, required: true, unique: true },
+	totalClicks: { type: Number, default: 0 },
+	clicks: [ClickSchema],
+	createdAt: { type: Date, default: Date.now },
+	expiresAt: { type: Date, default: Date.now },
+});
+
+const User = mongoose.model<UserDocument>('user', UserSchema);
+const LinkModel = mongoose.model<LinkDocument>('link', LinkSchema);
+
+export const appendUser = async (user: UserInDB): Promise<void> => {
+	try {
+		await User.create(user);
+	} catch (error) {
+		console.error('Error creating user:', error);
+		throw error;
+	}
+};
+
+export const findUserByEmail = async (
+	email: string
+): Promise<UserInDB | null> => {
+	try {
+		return await User.findOne({ email }).lean();
+	} catch (error) {
+		console.error('Error finding user by email:', error);
+		return null;
+	}
+};
+
+export const findUserById = async (
+	userId: string
+): Promise<UserInDB | null> => {
+	try {
+		return await User.findOne({ userId }).lean();
+	} catch (error) {
+		console.error('Error finding user by ID:', error);
+		return null;
+	}
+};
+
+// Link operations
+export const findLinks = async (query: any): Promise<Link[]> => {
+	try {
+		return await LinkModel.find(query).lean();
+	} catch (error) {
+		console.error('Error finding links:', error);
 		return [];
 	}
 };
 
-const writeUsers = async (users: UserInDB[]): Promise<void> => {
+export const appendLink = async (link: Link): Promise<void> => {
 	try {
-		await fs.writeFile(USER_DB_PATH, JSON.stringify(users, null, 2));
+		await LinkModel.create(link);
 	} catch (error) {
-		console.error('Error writing users:', error);
+		console.error('Error creating link:', error);
+		throw error;
 	}
 };
 
-const readLinks = async (): Promise<Link[]> => {
+export const updateStats = async (
+	device: string,
+	urlAlias: string
+): Promise<void> => {
 	try {
-		const data = await fs.readFile(LINKS_DB_PATH, 'utf-8');
-		return JSON.parse(data);
+		await LinkModel.findOneAndUpdate(
+			{ urlAlias },
+			{
+				$inc: { totalClicks: 1 },
+				$push: {
+					clicks: {
+						device: { type: device },
+						clickedAt: new Date(),
+					},
+				},
+			}
+		);
 	} catch (error) {
-		console.error('Error reading users:', error);
-		return [];
-	}
-};
-
-const writeLinks = async (links: Link[]): Promise<void> => {
-	try {
-		await fs.writeFile(LINKS_DB_PATH, JSON.stringify(links, null, 2));
-	} catch (error) {
-		console.error('Error writing users:', error);
-	}
-};
-
-export const appendUser = async (user: UserInDB) => {
-	const users = await readUsers();
-	users.push(user);
-	await writeUsers(users);
-};
-
-export const findUserByEmail = async (email: string) => {
-	const users = await readUsers();
-	return users.find((u) => u.email === email);
-};
-
-export const findUserById = async (userId: string) => {
-	const users = await readUsers();
-	return users.find((u) => u.userId === userId);
-};
-
-export const findLinks = async (query: string) => {
-	const links = await readLinks();
-	return JsonQuery(query, { data: links });
-};
-
-export const appendLink = async (link: Link) => {
-	const links = await readLinks();
-	links.push(link);
-	await writeLinks(links);
-};
-
-export const updateStats = async (device: string, urlAlias: string) => {
-	const links = await readLinks();
-	const linkIndex = links.findIndex((l) => l.urlAlias === urlAlias);
-
-	if (linkIndex !== -1) {
-		const link = links[linkIndex];
-		link.totalClicks++;
-		link.clicks.push({ device: { type: device }, clickedAt: new Date() });
-
-		links[linkIndex] = link;
-		await writeLinks(links);
+		console.error('Error updating link stats:', error);
+		throw error;
 	}
 };

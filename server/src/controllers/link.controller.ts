@@ -20,10 +20,10 @@ export const generateLink = async (
 		return;
 	}
 
-	const urlAlias = `${req.user.userId}-${customAlias || generateId()}`;
-	const existing = await findLinks(`[*urlAlias=${urlAlias}]`);
+	const urlAlias = `${req.user.userId}${customAlias || generateId()}`;
+	const existing = await findLinks({ userId: req.user.userId, urlAlias });
 
-	if (existing.value.length) {
+	if (existing.length) {
 		res.status(409).json({ message: 'URL Alias already in use.' });
 		return;
 	}
@@ -39,10 +39,11 @@ export const generateLink = async (
 	};
 
 	await appendLink(newLink);
+	const SERVER_BASE_URL = process.env['SERVER_BASE_URL'];
 
 	res.json({
 		originalUrl: originalUrl,
-		shortUrl: `http://localhost:8080/${newLink.urlAlias}`,
+		shortUrl: `${SERVER_BASE_URL}/${newLink.urlAlias}`,
 	});
 };
 
@@ -51,11 +52,9 @@ export const getLink = async (req: AuthenticatedRequest, res: Response) => {
 		res.status(401).json({ message: 'Unauthorized' });
 		return;
 	}
-	const { query: userQuery } = req.body;
-	const query = `[*userId=${req.user.userId} & ${userQuery || ''}]`;
-	const filteredLinks = await findLinks(query);
+	const filteredLinks = await findLinks({ userId: req.user.userId });
 
 	res.json({
-		links: filteredLinks.value,
+		links: filteredLinks,
 	});
 };

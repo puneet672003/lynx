@@ -4,17 +4,18 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import device from 'express-device';
+import { config } from 'dotenv';
 
 import router from './routes';
+import { connectDB } from './utils/db';
 
 const PORT = 8080;
 
-// import routes from './routes';
-// import { errorHandler, notFound } from './middlewares/error.middleware';
-
+config();
+connectDB();
 const app = express();
 
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({ origin: '*' }));
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(device.capture());
@@ -24,9 +25,6 @@ app.use(cookieParser());
 
 app.use(router);
 
-// app.use(notFound);
-// app.use(errorHandler);
-
 app.listen(PORT, () => {
-	console.log('Server is up: http://localhost:' + PORT);
+	console.log('Server is up' + PORT);
 });

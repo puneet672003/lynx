@@ -1,6 +1,6 @@
 # Lynx - URL Shortening App
 
-Lynx is a URL shortening application with the following stack:
+Lynx is a URL shortening application with the following stack: ([Demo video](https://youtu.be/wXCagHsmotM))
 
 - Frontend: React.js + Tailwind CSS + Hero UI
 - Backend: Node.js + Express.js + MongoDB (Mongoose)

@@ -1,6 +1,6 @@
 export type SiteConfig = typeof siteConfig;
 
-export const SERVER_BASE_URL = 'http://localhost:8080';
+export const SERVER_BASE_URL = ' https://a17c-103-211-12-178.ngrok-free.app';
 export const siteConfig = {
 	navItems: [
 		{

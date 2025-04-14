@@ -16,6 +16,8 @@ function SignUp() {
 		e.preventDefault();
 		const data = Object.fromEntries(new FormData(e.currentTarget));
 
+		if (data['password'] !== data['confirm-password']) setPasswordError(true);
+
 		api
 			.post('/auth/register', data)
 			.then((res) => {

@@ -11,10 +11,6 @@ export const siteConfig = {
 			label: 'Sign In',
 			href: '/sign-in',
 		},
-		{
-			label: 'Dashboard',
-			href: 'dashboard',
-		},
 	],
 	links: {
 		github: 'https://github.com/puneet672003/lynx/tree/main',
